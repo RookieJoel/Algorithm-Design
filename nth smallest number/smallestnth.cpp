@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int partitionRandomized(vector<int> &arr, int left, int right) {
+int partitionRandomized(vector<int> &arr, int left, int right) { //you can use mm5 for partition
     int pivotIndex = left + rand() % (right - left + 1);
     swap(arr[pivotIndex], arr[right]);
     int pivot = arr[right];

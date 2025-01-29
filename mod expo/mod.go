@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func mod(a, n, k int64) int64 {
 	if n == 1 {

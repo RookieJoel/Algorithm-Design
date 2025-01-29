@@ -1,54 +1,48 @@
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <cmath>
-#include <climits>
+// #include<iostream>
+// #include<cstdio>
+// #include<cstring>
+// #define ll long long
+// using namespace std;
+// ll n,f[18];
+// int cal(ll x){ 
+//     int res,i=16;
+//     if(x<=11)return min(x,13-x);
+//     while(f[i-1]>=x)i--;
+//     res=((x/f[i-1])*(i-1))+cal(x%f[i-1]);
+//     if(x<f[i]-x)return res;
+//     return min(res,i+cal(f[i]-x));
+// }
+// int main()
+// {
+//     f[1]=1;
+//     for(int i=2;i<=16;i++)f[i]=10*f[i-1]+1;
+//     scanf("%I64d",&n);
+//     printf("%d",cal(n));
+//     return 0;
+// }
 
-using namespace std;
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std; 
+vector<ll> ones = {1,11,111,1111,11111,111111,1111111,11111111,111111111} ;
 
-// Memoization map to optimize recursive calls
-unordered_map<int, int> memo;
-
-// Recursive function to calculate the minimal number of digits "1"
-int minimalOnes(int n) {
-    // Base case: if n is 0, no digits are needed
-    if (n == 0) return 0;
-
-    // Check if already computed
-    if (memo.count(n)) return memo[n];
-
-    // Generate all q_k values (1, 11, 111, ...) up to |n|
-    vector<int> q_values;
-    long long q = 1;
-    while (q <= abs(n)) {
-        q_values.push_back(q);
-        q = q * 10 + 1; // Generate the next q_k
+int q(ll n){
+    for(int i=ones.size()-1;i>=0;i--){
+        if(ones[i] <= abs(n)) return i;
     }
-
-    int min_count = INT_MAX;
-
-    // Try each q_k
-    for (auto qk : q_values) {
-        // Positive contribution
-        int count_positive = n / qk + minimalOnes(n % qk);
-        min_count = min(min_count, count_positive);
-
-        // Negative contribution
-        int count_negative = abs(n / qk) + minimalOnes(n % qk + qk);
-        min_count = min(min_count, count_negative);
-    }
-
-    // Store the result in memoization map
-    return memo[n] = min_count;
 }
 
-int main() {
-    // Input: Read n
-    int n;
-    cin >> n;
-
-    // Output: Minimal number of digits "1"
-    cout << minimalOnes(n) << endl;
-
-    return 0;
+int solve(ll n){
+    if(n<=11) return (n<=6) ? n : (13-n);
+    int qk = ones[q(n)];
+    int i = to_string(ones[q(n)]).size();
+    int res = floor(abs(n)/qk)*i + solve(n%qk);
+    int res2 = 1+floor(abs(n)/qk)*i + solve(n%qk);
+    if(n < ones[q(n)-1]) return res;
+    return min(res,res2);
+}
+int main(){
+    ll n;
+    cin >> n; 
+    cout << solve(n);
 }

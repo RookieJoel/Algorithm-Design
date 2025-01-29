@@ -1,42 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void solve(vector<long long> &v, long long len, long long& total, int a, int b) {
-    long long count = accumulate(v.begin(), v.end(), 0LL);
+long long solve(vector<long long>& v, long long l, long long r, int a, int b) {
+    long long count = upper_bound(v.begin(), v.end(), r) - lower_bound(v.begin(), v.end(), l);
+    if (count == 0) return a;
 
-    if (len == 1) {
-        total += (count == 0 ? a : b * count * len);
-        return;
-    }
+    long long all = (r - l + 1) * count * b;
 
-    long long all = (count == 0 ? a : b * count * len);
+    if (l == r) return all;
 
-    int mid = len >> 1;
-    vector<long long> left(v.begin(), v.begin() + mid);
-    vector<long long> right(v.begin() + mid, v.end());
+    long long mid = (l + r) / 2;
 
-    long long divide= 0;
-    solve(left, mid, divide, a, b);
-    solve(right, mid, divide, a, b);
+    long long left = solve(v, l, mid, a, b);
+    long long right = solve(v, mid + 1, r, a, b);
 
-    total += min(all, divide);
+    return min(all, left + right);
 }
 
 int main() {
-    long long p, k, a, b;
+    int p, k, a, b;
     cin >> p >> k >> a >> b;
-    long long len = pow(2, p);
-    vector<long long> v(len, 0);
+
+    long long len = (1LL << p); 
+    vector<long long> v;
 
     for (int i = 0; i < k; i++) {
         long long x;
         cin >> x;
-        v[x - 1] += 1;
+        v.push_back(x - 1);
     }
 
-    long long total = 0;
-    solve(v, len, total, a, b);
-    cout << total << endl;
+    sort(v.begin(), v.end());
+    cout << solve(v, 0, len - 1, a, b) << endl;
 
     return 0;
 }
