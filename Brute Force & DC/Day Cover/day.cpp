@@ -5,7 +5,7 @@ vector<int> v[29];
 int vst[1009];
 int n, m;
 int ans = INT_MAX; // Using INT_MAX for initialization
-
+            //student index  coverDay selectedStudent
 void solve(int now, int cnt, int cst){
     if (cnt == n){
         ans = min(ans, cst);
