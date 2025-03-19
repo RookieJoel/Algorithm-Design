@@ -1,44 +1,58 @@
-#include<bits/stdc++.h>
-#pragma GCC optimize("O3,unroll-loops,fast-math")
+#include <bits/stdc++.h>
+
 using namespace std;
 
-vector<int> parent(2000);
-int bfs(int node,vector<vector<int>> &adj,vector<int> &c){
-    queue<int> q; 
-    q.push(node);
-    int maxDif = INT_MIN;
-    while(!q.empty()){
-        int cur = q.front();
-        q.pop(); 
-        for(auto &n: adj[cur]){
-            parent[n] = cur; 
-            int i = n;
-            int dif = 0;
-            while(i > 0){
-                int par = parent[i];
-                dif = max({dif,c[n]-c[par]});
-                i = par;
-            }
-            maxDif = max(maxDif,dif);
-            q.push(n);
-        }   
+int findLargestDiffPath(int n, vector<int>& c, vector<vector<int>>& adj) {
+    vector<int> inDegree(n, 0);  
+    vector<int> minValue = c;    
+    int maxDiff = 0;       
+
+    for (int i = 0; i < n; i++) {
+        for (int neighbor : adj[i]) {
+            inDegree[neighbor]++;
+        }
     }
 
-    return maxDif;
+    queue<int> q;
+    for (int i = 0; i < n; i++) {
+        if (inDegree[i] == 0) q.push(i);
+    }
+
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+
+        for (int neighbor : adj[node]) {
+            minValue[neighbor] = min(minValue[neighbor], minValue[node]);  
+            maxDiff = max(maxDiff, c[neighbor] - minValue[neighbor]);      
+
+            if (--inDegree[neighbor] == 0) {
+                q.push(neighbor);
+            }
+        }
+    }
+
+    return maxDiff;
 }
 
-int main(){
-    int v,e;
-    cin >> v >> e;
-    vector<int> c(v);
-    for(int i=0;i<v;i++) cin >> c[i];
-    vector<vector<int>> adj(v);
-    while(e--){
-        int x,y;
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+
+    int n, m;
+    cin >> n >> m;
+    
+    vector<int> c(n);
+    for (int i = 0; i < n; i++) cin >> c[i];
+
+    vector<vector<int>> adj(n);
+    for (int i = 0; i < m; i++) {
+        int x, y;
         cin >> x >> y;
         adj[x].push_back(y);
     }
 
-    cout << bfs(0,adj,c);
-
+    cout << findLargestDiffPath(n, c, adj) << "\n";
+    return 0;
 }
+
