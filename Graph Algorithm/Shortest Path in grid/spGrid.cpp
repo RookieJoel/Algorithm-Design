@@ -1,50 +1,93 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <tuple>
+#include <algorithm>
 
 using namespace std;
 
-vector<int> dx = {-1, 1, 0, 0}; // U,D
-vector<int> dy = {0, 0, -1, 1}; // L,R
+const int MAX = 1005;
+int R, C;
+int grid[MAX][MAX];
+bool visited[MAX][MAX];
+bool inStack[MAX][MAX];
+int maxLength = 0, loopCount = 0;
 
-int bfs(int r, int c, vector<vector<char>> &grid) {
-    vector<vector<int>> dist(r, vector<int>(c, -1)); //init distance
-    queue<pair<int, int>> q;
-    q.push(make_pair(0, 0));
-    dist[0][0] = 0; 
-    while (!q.empty()) {
-        auto current = q.front();
-        q.pop();
-        int x = current.first, y = current.second; 
-        
-        // met the target
-        if (x == r - 1 && y == c - 1) {
-            return dist[x][y];
+vector<pair<int, int>> directions[7]; // ถนนแบบ 1-6
+
+bool isConnected(int type, int dr, int dc) {
+    for (auto [ndr, ndc] : directions[type]) {
+        if (ndr == -dr && ndc == -dc) return true;
+    }
+    return false;
+}
+
+int dfs(int r, int c, int pr, int pc, vector<vector<pair<int, int>>>& path) {
+    visited[r][c] = true;
+    inStack[r][c] = true;
+
+    int length = 1;
+
+    for (auto [dr, dc] : directions[grid[r][c]]) {
+        int nr = r + dr, nc = c + dc;
+
+        if (nr < 1 || nr > R || nc < 1 || nc > C) continue;
+        if (!isConnected(grid[nr][nc], dr, dc)) continue;
+
+        if (!visited[nr][nc]) {
+            path[nr][nc] = {r, c};
+            dfs(nr, nc, r, c, path);
         }
-
-        // moving to 4 directions
-        for (int i = 0; i < 4; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-
-            if (nx >= 0 && ny >= 0 && nx < r && ny < c && grid[nx][ny] == '.' && dist[nx][ny] == -1) {
-                dist[nx][ny] = dist[x][y] + 1;
-                q.push(make_pair(nx, ny));
+        else if (inStack[nr][nc] && !(nr == pr && nc == pc)) {
+            // พบวงวน
+            int loopLen = 1;
+            int tr = r, tc = c;
+            while (!(tr == nr && tc == nc)) {
+                tie(tr, tc) = path[tr][tc];
+                loopLen++;
+            }
+            if (loopLen >= 2) { // ✅ กันวงวนปลอม
+                loopCount++;
+                maxLength = max(maxLength, loopLen);
             }
         }
     }
 
-    return -1; 
+    inStack[r][c] = false;
+    return length;
 }
 
 int main() {
-    int r, c;
-    cin >> r >> c;
-    vector<vector<char>> grid(r, vector<char>(c));
+    ios::sync_with_stdio(false);
+    cin.tie(0);
 
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            cin >> grid[i][j];
-        }
+    cin >> R >> C;
+    if(R == 1) {
+      cout << "0 0";
+      return 0;
     }
-    if(bfs(r, c, grid) == -1) cout << -1 << endl;
-    else cout << bfs(r, c, grid) << endl;
+    // ทิศของถนนแต่ละแบบ
+    directions[1] = {{0, -1}, {0, 1}};     // ซ้าย ↔ ขวา
+    directions[2] = {{-1, 0}, {1, 0}};     // บน ↕ ล่าง
+    directions[3] = {{-1, 0}, {0, 1}};     // บน ↔ ขวา
+    directions[4] = {{0, 1}, {1, 0}};      // ขวา ↔ ล่าง
+    directions[5] = {{1, 0}, {0, -1}};     // ล่าง ↔ ซ้าย
+    directions[6] = {{0, -1}, {-1, 0}};    // ซ้าย ↔ บน
+
+    for (int i = 1; i <= R; ++i)
+        for (int j = 1; j <= C; ++j)
+            cin >> grid[i][j];
+
+    vector<vector<pair<int, int>>> path(MAX, vector<pair<int, int>>(MAX, {-1, -1}));
+
+    for (int i = 1; i <= R; ++i)
+        for (int j = 1; j <= C; ++j)
+            if (!visited[i][j])
+                dfs(i, j, -1, -1, path);
+
+    if (loopCount == 0)
+        cout << "0\n";
+    else
+        cout << loopCount << " " << maxLength << "\n";
+
+    return 0;
 }

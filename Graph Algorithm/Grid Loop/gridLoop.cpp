@@ -67,6 +67,7 @@ int main() {
 
     for (int i = 0; i < R; i++) {
         for (int j = 0; j < C; j++) {
+            if(adj[{i,j}].empty()) continue;
             if (!visited[{i, j}]) {
                 int cycle_length = dfs({i, j}, adj, visited, {-1, -1}, 0);
                 if (cycle_length != -1) {

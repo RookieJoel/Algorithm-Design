@@ -6,7 +6,7 @@ vector<vector<int>> grid;
 vector<vector<int>> dist;
 queue<pair<int, int>> q;
 
-const int dx[4] = {-1, 1, 0, 0}; // Direction arrays (Up, Down, Left, Right)
+const int dx[4] = {-1, 1, 0, 0}; 
 const int dy[4] = {0, 0, -1, 1};
 
 void bfs() {

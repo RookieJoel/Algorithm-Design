@@ -6,7 +6,7 @@ bool cycleDetection(vector<vector<int>> &adj, vector<int> &visited, int node, in
     visited[node] = 1;
     for(auto &x : adj[node]){
         if(visited[x] == 0){
-            cycleDetection(adj,visited,x,node);
+            if(cycleDetection(adj,visited,x,node)) return true;
         }else if(x != parent){
             return true;
         }

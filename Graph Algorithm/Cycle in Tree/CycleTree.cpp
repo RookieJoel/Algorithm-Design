@@ -15,7 +15,7 @@ bool cycleDetection(vector<vector<int>> &adj, int node, int par) {
         if (visited[neighbor] == 0) {
             parent[neighbor] = node;
             if (cycleDetection(adj, neighbor, node)) return true;
-        } else { // พบ Cycle
+        } else { 
             cycle_start = neighbor;
             cycle_end = node;
             return true;
@@ -34,7 +34,7 @@ int findCycleSize(int start) {
         current = parent[current];
     }
 
-    return count + 1;
+    return count;
 }
 
 int main() {
@@ -61,5 +61,5 @@ int main() {
         }
     }
 
-    cout << findCycleSize(cycle_start) - 1 ;
+    cout << findCycleSize(cycle_start);
 }

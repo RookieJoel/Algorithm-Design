@@ -33,7 +33,7 @@ int main(){
     while(!q.empty()){
         auto [zone, r0, c0] = q.front(); q.pop();
 
-        // วาร์ปไปโลกใต้ถ้าอยู่บนหนอน
+        // warp
         if(zone == 'N' && worm.count({r0,c0}) && !visitedS[r0][c0] && S[r0][c0] == 0){
             visitedS[r0][c0] = true;
             q.push({'S', r0, c0});

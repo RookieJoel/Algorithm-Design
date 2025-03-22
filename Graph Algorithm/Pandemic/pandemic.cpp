@@ -45,12 +45,6 @@ int main(){
     }
 
     bfs(q,grid);
-    // cout << "\n";
-    // for(int i=0;i<R;i++){
-    //     for(int j=0;j<C;j++){
-    //         cout << grid[i][j] << " ";
-    //     }cout << "\n";
-    // }
 
     int count = 0;
     for(int i=0;i<R;i++){

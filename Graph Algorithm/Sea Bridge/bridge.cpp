@@ -19,7 +19,7 @@ int main() {
             cin >> grid[i][j];
             if (grid[i][j] == 1) {
                 q.push({i, j});
-                dist[i][j] = 1; // เริ่มต้นที่ระยะ 1
+                dist[i][j] = 1; 
             }
         }
     }

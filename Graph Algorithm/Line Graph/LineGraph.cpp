@@ -1,29 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool bfs(int node, vector<vector<int>> &adj, vector<int> &visited,vector<int> &par) {
+bool bfs(int node, vector<vector<int>> &adj, vector<int> &visited) {
     queue<int> q;
     q.push(node);
     visited[node] = 1;
-    bool flag = 0;
-    int count = 0;
-    while(!q.empty()){
+    
+    int node_count = 0;
+    int edge_count = 0;
+    int leaf_count = 0;
+
+    while (!q.empty()) {
         int u = q.front();
         q.pop();
-        for(auto &v : adj[u]){
-            if(!visited[v]){
-                par[v] = u;
+        node_count++;
+        edge_count += adj[u].size(); // Count all edges in this component
+
+        if (adj[u].size() == 1) {
+            leaf_count++; // Counting leaf nodes 
+        }
+        for (auto &v : adj[u]) {
+            if (!visited[v]) {
                 visited[v] = 1;
-                if(par[v] = node)count++;
-            q.push(v); 
-            }else if(v != par[v]){
-                flag = 1;
-                break;
+                q.push(v);
             }
-        }if(flag)break;
+        }
     }
 
-    return flag || count > 2;
+    edge_count /= 2;
+
+    return (edge_count == node_count - 1) && (leaf_count == 2 || node_count == 1);
 }
 
 int main() {
@@ -33,6 +39,7 @@ int main() {
     int v, e;
     cin >> v >> e;
     vector<vector<int>> adj(v);
+
     while (e--) {
         int a, b;
         cin >> a >> b;
@@ -44,14 +51,17 @@ int main() {
     vector<int> visited(v, 0);
 
     for (int i = 0; i < v; i++) {
-        if (adj[i].empty()) ans++;
+        if (adj[i].empty()) {
+            ans++;
+            visited[i] = 1;
+        }
     }
 
-    vector<int> par(v);
     for (int i = 0; i < v; i++) {
-        if(adj[i].size() > 2) continue;
-        else if (!adj[i].empty() && !visited[i]) {
-            if (!bfs(i, adj, visited,par)) ans++;
+        if (!visited[i]) {
+            if (bfs(i, adj, visited)) {
+                ans++;
+            }
         }
     }
 

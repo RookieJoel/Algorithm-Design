@@ -33,7 +33,7 @@ int main() {
 
         for (auto [v2, w] : adj[u]) {
             if (!visited[v2] && w < minEdge[v2]) {
-                s.erase({minEdge[v2], v2}); // ลบของเก่า (ถ้ามี)
+                s.erase({minEdge[v2], v2});
                 minEdge[v2] = w;
                 s.insert({w, v2});
             }
