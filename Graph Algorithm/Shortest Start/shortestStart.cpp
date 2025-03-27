@@ -1,44 +1,46 @@
-#include<bits/stdc++.h>
-
+#include <bits/stdc++.h>
 using namespace std;
-int n,m,k;
-int bellman(int start,vector<vector<pair<int,int>>> &adj,int target){
-    vector<int> dist(n,INT_MAX);
-    dist[start] = 0;
-    //relax
+
+const int INF = 1e9 + 7;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n, m, k;
+    cin >> n >> m >> k;
+
+    int target;
+    cin >> target;
+
+    vector<int> starts(k);
+    for (int i = 0; i < k; ++i) {
+        cin >> starts[i];
+    }
+
+    vector<vector<pair<int, int>>> revGraph(n);
+    for (int i = 0; i < m; ++i) {
+        int a, b, w;
+        cin >> a >> b >> w;
+        revGraph[b].emplace_back(a, w); 
+    }
+    vector<int> dist(n,INF);
+    dist[target] = 0;
     for(int i=0;i<n-1;i++){
         for(int j=0;j<n;j++){
-            if(dist[j] == INT_MAX) continue;
-            for(auto &x : adj[j]){
+            for(auto &x :revGraph[j]){
                 int v = x.first;
                 int w = x.second;
-                if(dist[j]+w < dist[v]){
+                if(dist[j] != INF && dist[j]+w < dist[v]){
                     dist[v] = dist[j]+w;
                 }
             }
         }
     }
 
-    return dist[target];
-}
-
-int main(){
-    ios_base::sync_with_stdio(false);cin.tie(NULL);
-    cin >> n>>m>>k;
-    int target;
-    cin >> target;
-    vector<int> candidate(k);
-    for(int i=0;i<k;i++) cin >> candidate[i];
-    vector<vector<pair<int,int>>> adj(n); //adj[u] = {v,weight}
-    while(m--){
-        int a,b,c;
-        cin >> a >> b >> c;
-        adj[a].push_back({b,c});
-    }   
     int ans = INT_MAX;
-    for(auto &c : candidate){
-        int x = bellman(c,adj,target);
-        ans = min(ans,x);
+    for(auto &node : starts){
+        ans = min(ans,dist[node]);
     }
 
     cout << ans;
