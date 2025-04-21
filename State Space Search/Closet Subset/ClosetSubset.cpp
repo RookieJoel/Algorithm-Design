@@ -11,6 +11,7 @@ void solve(int idx,int count,int curSum){
     }
     if(idx == n)return;
     if (count + (n - idx) < m) return;
+    if(curSum > k && abs(curSum-k) > best) return;
     //take
     solve(idx+1,count+1,curSum+a[idx]);
     //dont
