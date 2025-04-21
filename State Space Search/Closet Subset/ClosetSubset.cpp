@@ -1,28 +1,26 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
+#define pii pair<int,int>
 using namespace std;
-
+int n,m,k;
 vector<int> a;
-int n, m, k;
-
-void solve(int idx, int count, int total, int &ans) {
-    if (count > m) return;
-    if (idx == n) {
-        if (count == m) {
-            ans = min(ans, abs(k - total));
-        }
+int best = INT_MAX;
+void solve(int idx,int count,int curSum){
+    if(count == m){
+        best = min(best,abs(k-curSum));
         return;
     }
-    solve(idx + 1, count + 1, total + a[idx], ans);
-    solve(idx + 1, count, total, ans);
+    if(idx == n)return;
+    if (count + (n - idx) < m) return;
+    //take
+    solve(idx+1,count+1,curSum+a[idx]);
+    //dont
+    solve(idx+1,count,curSum);
 }
-
-int main() {
+int main(){
     ios_base::sync_with_stdio(false); cin.tie(NULL);
-    cin >> n >> m >> k;
+    cin>>n>>m>>k;
     a.resize(n);
-    for (int i = 0; i < n; i++) cin >> a[i];
-
-    int ans = INT_MAX;
-    solve(0, 0, 0, ans);
-    cout << ans;
+    for(int i=0;i<n;i++)cin>>a[i];
+    solve(0,0,0);
+    cout << best;
 }
