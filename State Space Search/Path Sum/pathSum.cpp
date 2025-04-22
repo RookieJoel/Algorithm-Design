@@ -1,52 +1,40 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
+#define pii pair<int,int>
 using namespace std;
-
-int n, m;
-vector<int> Ki(8);
-vector<vector<pair<int, int>>> adj;
-vector<bool> found(8, false);
-
-void dfs(int node, int sum, int target_index, vector<bool> &visited) {
-    if (sum == Ki[target_index]) {
-        found[target_index] = true;
-        return;
-    }
-    if (sum > Ki[target_index]) return;
-
-    visited[node] = true;
-    for (auto [next, w] : adj[node]) {
-        if (!visited[next] && !found[target_index]) {
-            dfs(next, sum + w, target_index, visited);
+int dx[] = {-1,1,0,0};
+int dy[] = {0,0,-1,1}; 
+int main(){
+    int R,C,k;
+    cin>>R>>C>>k;
+    vector<vector<int>> grid(R+1,vector<int>(C+1)),dist(R+1,vector<int>(C+1,INT_MAX));
+    queue<pii> q;
+    for(int i=1;i<=R;i++){
+        for(int j=1;j<=C;j++){
+        cin>>grid[i][j];
+        if(grid[i][j] == 1){
+            q.push({i,j});dist[i][j] = 0;
+        }
         }
     }
-    visited[node] = false;
-}
-
-int main() {
-    ios_base::sync_with_stdio(false); cin.tie(NULL);
-
-    cin >> n >> m;
-    for (int i = 0; i < 8; ++i) cin >> Ki[i];
-
-    adj.resize(n);
-    for (int i = 0; i < m; ++i) {
-        int a, b, w;
-        cin >> a >> b >> w;
-        adj[a].emplace_back(b, w);
-        adj[b].emplace_back(a, w); // กราฟไม่มีทิศ
-    }
-
-    for (int k = 0; k < 8; ++k) {
-        found[k] = false;
-        for (int start = 0; start < n && !found[k]; ++start) {
-            vector<bool> visited(n, false);
-            dfs(start, 0, k, visited);
+    while(!q.empty()){
+        auto &x = q.front();q.pop();
+        int r = x.first;
+        int c = x.second;
+        if(dist[r][c] >=k)continue;;
+        for(int i=0;i<4;i++){
+            int nr = r+dx[i];
+            int nc = c+dy[i];
+            if(nr>=1 && nr <=R && nc >=1 && nc <= C && dist[nr][nc] == INT_MAX && grid[nr][nc] == 0){
+                dist[nr][nc] = dist[r][c]+1;
+                grid[nr][nc] = 2;
+                q.push({nr,nc});
+            }
         }
     }
-
-    for (int i = 0; i < 8; ++i) {
-        cout << (found[i] ? "YES" : "NO") << '\n';
+    for(int i=1;i<=R;i++){
+        for(int j=1;j<=C;j++){
+            cout << grid[i][j] << " ";
+        }cout << "\n";
     }
 
-    return 0;
 }
